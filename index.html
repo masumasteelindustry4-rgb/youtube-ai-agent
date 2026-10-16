@@ -1,1 +1,148 @@
+`HASHTAGS\n${[...new Set([...tags, "#YouTube"])].join(" ")}`;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Plan YouTube videos, generate SEO titles and descriptions, and organize your content.">
+  <title>YouTube AI Agent</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #172033;
+    }
+    header {
+      background: #123c32;
+      color: white;
+      padding: 22px 16px;
+    }
+    header h1 { margin: 0 0 8px; font-size: 25px; }
+    header p { margin: 0; color: #d5e8df; }
+    main { max-width: 760px; margin: 24px auto; padding: 0 15px; }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 14px;
+      margin-bottom: 18px;
+      box-shadow: 0 3px 14px #152b3810;
+    }
+    h2 { font-size: 19px; margin-top: 0; }
+    label { display: block; font-weight: bold; margin: 14px 0 7px; }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccd5df;
+      border-radius: 8px;
+      font: inherit;
+      background: white;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 13px;
+      border: 0;
+      border-radius: 8px;
+      background: #087f5b;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover { background: #066849; }
+    #result { white-space: pre-wrap; line-height: 1.7; overflow-wrap: anywhere; }
+    .muted { color: #64748b; font-size: 14px; }
+    footer { text-align: center; padding: 20px; color: #64748b; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>▶ YouTube AI Agent</h1>
+    <p>Your YouTube content planning assistant</p>
+  </header>
 
+  <main>
+    <section class="card">
+      <h2>🎯 Video Content Planner</h2>
+      <p class="muted">Create a starter content plan for your next video.</p>
+
+      <label for="topic">Video topic</label>
+      <input id="topic" placeholder="e.g. How mobile phones are manufactured">
+
+      <label for="format">Video format</label>
+      <select id="format">
+        <option value="YouTube Shorts">YouTube Shorts</option>
+        <option value="Long-form YouTube video">Long-form video</option>
+      </select>
+
+      <label for="audience">Target audience</label>
+      <input id="audience" placeholder="e.g. Technology lovers">
+
+      <button id="generate">Generate Content Plan</button>
+    </section>
+
+    <section class="card" aria-live="polite">
+      <h2>📝 Your Content Plan</h2>
+      <div id="result">Your generated plan will appear here.</div>
+      <button id="copy" hidden>Copy Content Plan</button>
+    </section>
+    <p class="muted">Prototype version: results are generated in your browser using templates, not a live AI model.</p>
+  </main>
+
+  <footer>Built for creators • YouTube AI Agent</footer>
+
+  <script>
+    const topic = document.getElementById("topic");
+    const format = document.getElementById("format");
+    const audience = document.getElementById("audience");
+    const result = document.getElementById("result");
+    const copyButton = document.getElementById("copy");
+
+    document.getElementById("generate").addEventListener("click", () => {
+      const subject = topic.value.trim();
+      if (!subject) {
+        result.textContent = "Please enter a video topic first.";
+        copyButton.hidden = true;
+        return;
+      }
+
+      const type = format.value;
+      const viewers = audience.value.trim() || "YouTube viewers";
+      const title = type === "YouTube Shorts"
+        ? `How ${subject} Works! 🤯 #Shorts`
+        : `${subject}: A Complete Guide`;
+
+      const description =
+        `Explore ${subject} in this ${type.toLowerCase()}, made for ${viewers}. ` +
+        `Discover the process, key facts, and details worth knowing.\n\n` +
+        `Subscribe for more useful videos!`;
+
+      const tags = subject.toLowerCase()
+        .replace(/[^\p{L}\p{N}\s-]/gu, "")
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 5)
+        .map(word => "#" + word.replace(/-/g, ""));
+
+      result.textContent =
+        `VIDEO TITLE\n${title}\n\n` +
+        `DESCRIPTION\n${description}\n\n` +
+        `HASHTAGS\n${[...new Set([...tags, "#YouTube"]).].join(" ")}`;
+      copyButton.hidden = false;
+    });
+
+    document.getElementById("copy").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(result.textContent);
+        copyButton.textContent = "Copied!";
+      } catch {
+        copyButton.textContent = "Copy unavailable — select the text manually.";
+      }
+    });
+  </script>
+</body>
+    </html>
+    
